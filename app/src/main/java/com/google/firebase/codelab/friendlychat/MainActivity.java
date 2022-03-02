@@ -19,11 +19,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity
         // Define Firebase Remote Config Settings.
         FirebaseRemoteConfigSettings firebaseRemoteConfigSettings =
                 new FirebaseRemoteConfigSettings.Builder()
-                        .setDeveloperModeEnabled(true)
                         .build();
 
         // Define default config values. Defaults are used when fetched config values are not
@@ -166,11 +165,11 @@ public class MainActivity extends AppCompatActivity
         defaultConfigMap.put("friendly_msg_length", 10L);
 
         // Apply config settings and default values.
-        mFirebaseRemoteConfig.setConfigSettings(firebaseRemoteConfigSettings);
-        mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
+        mFirebaseRemoteConfig.setConfigSettingsAsync(firebaseRemoteConfigSettings);
+        mFirebaseRemoteConfig.setDefaultsAsync(defaultConfigMap);
 
         // Fetch remote config.
-        fetchConfig();
+        // fetchConfig();
 
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
         //======================================================
@@ -209,10 +208,10 @@ public class MainActivity extends AppCompatActivity
                             .into(viewHolder.messengerImageView);
                 }
                 // write this message to the on-device index
-                FirebaseAppIndex.getInstance().update(getMessageIndexable(friendlyMessage));
+                FirebaseAppIndex.getInstance(getApplicationContext()).update(getMessageIndexable(friendlyMessage));
 
                 // log a view action on it
-                FirebaseUserActions.getInstance().end(getMessageViewAction(friendlyMessage));
+                FirebaseUserActions.getInstance(getApplicationContext()).end(getMessageViewAction(friendlyMessage));
             }
         };
 
@@ -355,11 +354,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     // 이거 안씀
+    /*
     public void fetchConfig() {
         long cacheExpiration = 3600; // 1 hour in seconds
         // If developer mode is enabled reduce cacheExpiration to 0 so that
         // each fetch goes to the server. This should not be used in release
         // builds.
+
         if (mFirebaseRemoteConfig.getInfo().getConfigSettings()
                 .isDeveloperModeEnabled()) {
             cacheExpiration = 0;
@@ -383,7 +384,7 @@ public class MainActivity extends AppCompatActivity
                         applyRetrievedLengthLimit();
                     }
                 });
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

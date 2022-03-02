@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.io.IOException;
 
@@ -27,13 +28,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
+/*
 public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     private static final String TAG = "MyFirebaseIIDService";
 
-    /**
-     * The Application's current Instance ID token is no longer valid and thus a new one must be requested.
-     */
     public void onTokenRefresh() {
         // If you need to handle the generation of a token, initially or
         // after a refresh this is where you should do that. , 메시지 서비스 (FCM)
@@ -61,4 +60,33 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         }
     }
 
+}
+*/
+
+public class MyFirebaseInstanceIdService extends FirebaseMessagingService {
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        Log.d("NEW_TOKEN", s);
+
+        sendRegistrationToServer(s);
+    }
+
+    private void sendRegistrationToServer(String token) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = new FormBody.Builder()
+                .add("Token", token)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://서버주소/fcm/register.php")
+                .post(body)
+                .build();
+
+        try {
+            client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

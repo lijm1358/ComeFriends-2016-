@@ -1,7 +1,7 @@
 package com.google.firebase.codelab.friendlychat;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 
 public class notification_activity extends AppCompatActivity {
